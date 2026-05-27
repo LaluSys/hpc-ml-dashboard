@@ -4,6 +4,23 @@ from hpc import config, connection, credentials, slurm
 
 st.set_page_config(page_title="HPC ML Dashboard", page_icon="🖥️", layout="wide")
 
+st.markdown(
+    """
+    <style>
+    .footer {
+        position: fixed; bottom: 0; left: 0; width: 100%;
+        text-align: center; padding: 6px 0;
+        font-size: 0.75rem; color: #888;
+        background: var(--background-color);
+        border-top: 1px solid #e0e0e022;
+        z-index: 999;
+    }
+    </style>
+    <div class="footer">Luna Schon &times; Claude Code</div>
+    """,
+    unsafe_allow_html=True,
+)
+
 cfg = config.load()
 
 # --- Sidebar: connection status ---
