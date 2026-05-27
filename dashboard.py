@@ -1,8 +1,8 @@
 import streamlit as st
 
-from hpc import config, connection, slurm
+from hpc import config, connection, credentials, slurm
 
-st.set_page_config(page_title="HPC ML Dashboard", page_icon="", layout="wide")
+st.set_page_config(page_title="HPC ML Dashboard", page_icon="🖥️", layout="wide")
 
 cfg = config.load()
 
@@ -29,12 +29,32 @@ with st.sidebar:
 
 # --- Main: Login ---
 if "ssh" not in st.session_state or not st.session_state["ssh"].is_alive():
-    st.title("Login")
+    st.title("Login — Uni Kassel HPC Cluster")
+
+    st.info(
+        "🔒 **Zugang nur aus dem Uni-Netz möglich.**  \n"
+        "Von außerhalb bitte zuerst per **Cisco AnyConnect VPN** verbinden: `vpn.uni-kassel.de`",
+        icon="ℹ️",
+    )
+
+    saved = credentials.load()
 
     with st.form("login_form"):
-        hostname = st.text_input("Server", value=cfg["cluster"]["hostname"], disabled=True)
-        username = st.text_input("Uni-Kennung (uk...)", value=cfg["cluster"].get("username", ""))
-        password = st.text_input("Passwort", type="password")
+        st.text_input("Server", value=cfg["cluster"]["hostname"], disabled=True)
+        username = st.text_input(
+            "Uni-Kennung (uk...)",
+            value=saved.get("username") or cfg["cluster"].get("username", ""),
+        )
+        password = st.text_input(
+            "Passwort",
+            type="password",
+            value=saved.get("password", ""),
+        )
+        save_creds = st.checkbox(
+            "Zugangsdaten lokal speichern",
+            value=bool(saved),
+            help="Speichert Kennung und Passwort in .credentials.yaml (nur auf diesem Gerät, nie im Git-Repo).",
+        )
         submitted = st.form_submit_button("Verbinden", type="primary")
 
     if submitted:
@@ -54,8 +74,14 @@ if "ssh" not in st.session_state or not st.session_state["ssh"].is_alive():
                     home = stdout.strip()
                     raw_workdir = cfg["cluster"]["remote_workdir"]
                     workdir = raw_workdir.replace("~", home) if raw_workdir.startswith("~") else raw_workdir
-                    # ensure workdir + logs/ exist
-                    conn.run(f"mkdir -p {workdir}/logs {workdir}/scripts")
+                    # ensure workdir subdirs exist
+                    conn.run(f"mkdir -p {workdir}/logs {workdir}/scripts {workdir}/data")
+
+                    if save_creds:
+                        credentials.save(username, password)
+                    else:
+                        credentials.clear()
+
                     st.session_state["ssh"] = conn
                     st.session_state["username"] = username
                     st.session_state["workdir"] = workdir
@@ -74,4 +100,4 @@ else:
     with col2:
         st.page_link("pages/2_Monitor.py", label="Jobs überwachen", icon="📊")
     with col3:
-        st.page_link("pages/3_Files.py", label="Dateien", icon="📁")
+        st.page_link("pages/3_Files.py", label="Dateien & Datensätze", icon="📁")
