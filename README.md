@@ -17,8 +17,8 @@ cd hpc-ml-dashboard
 # Linux / macOS
 bash setup.sh
 
-# Windows (PowerShell als Admin)
-.\setup.ps1
+# Windows (PowerShell)
+powershell -ExecutionPolicy Bypass -File .\setup.ps1
 ```
 
 ## Dashboard starten
