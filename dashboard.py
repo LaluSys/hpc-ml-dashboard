@@ -49,9 +49,16 @@ if "ssh" not in st.session_state or not st.session_state["ssh"].is_alive():
                         password=password,
                         port=cfg["cluster"]["port"],
                     )
+                    # resolve ~ via the server so it works on any cluster layout
+                    stdout, _, _ = conn.run("echo $HOME")
+                    home = stdout.strip()
+                    raw_workdir = cfg["cluster"]["remote_workdir"]
+                    workdir = raw_workdir.replace("~", home) if raw_workdir.startswith("~") else raw_workdir
+                    # ensure workdir + logs/ exist
+                    conn.run(f"mkdir -p {workdir}/logs {workdir}/scripts")
                     st.session_state["ssh"] = conn
                     st.session_state["username"] = username
-                    st.session_state["workdir"] = cfg["cluster"]["remote_workdir"].replace("~", f"/gpfs/home08/{username}")
+                    st.session_state["workdir"] = workdir
                     st.session_state["cfg"] = cfg
                     st.success("Verbunden!")
                     st.rerun()
@@ -63,8 +70,8 @@ else:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.page_link("pages/1_Submit_Job.py", label="Job einreichen", icon="")
+        st.page_link("pages/1_Submit_Job.py", label="Job einreichen", icon="🚀")
     with col2:
-        st.page_link("pages/2_Monitor.py", label="Jobs überwachen", icon="")
+        st.page_link("pages/2_Monitor.py", label="Jobs überwachen", icon="📊")
     with col3:
-        st.page_link("pages/3_Files.py", label="Dateien", icon="")
+        st.page_link("pages/3_Files.py", label="Dateien", icon="📁")
