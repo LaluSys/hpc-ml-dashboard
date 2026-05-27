@@ -21,31 +21,27 @@ bash setup.sh
 .\setup.ps1
 ```
 
-## Konfiguration
-
-Öffne `config.yaml` (wird automatisch aus `config.example.yaml` erstellt) und trage deine Kennung ein:
-
-```yaml
-cluster:
-  hostname: its-cs1.its.uni-kassel.de
-  username: uk12345   # ← deine uk-Nummer
-```
-
-`config.yaml` ist in `.gitignore` — wird **nie** ins Repo hochgeladen.
-
 ## Dashboard starten
 
 ```bash
 # Linux
-source .venv/bin/activate
-streamlit run dashboard.py
+python launch.py          # oder Doppelklick auf Desktop-Shortcut
 
 # Windows
-.\.venv\Scripts\Activate.ps1
-streamlit run dashboard.py
+doppelklick launch.pyw    # kein Terminalfenster
 ```
 
-Öffnet automatisch http://localhost:8501
+Öffnet automatisch http://localhost:8501. Zugangsdaten werden beim ersten Login im Dashboard eingegeben und können dort gespeichert werden.
+
+## Desktop-Shortcut einrichten (einmalig)
+
+```bash
+# Linux
+bash install_shortcut.sh
+
+# Windows (PowerShell)
+.\install_shortcut.ps1
+```
 
 ## Erste Schritte
 
