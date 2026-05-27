@@ -11,7 +11,7 @@ Streamlit-Dashboard zum Einreichen und Überwachen von KI-Trainings-Jobs auf dem
 ## Installation
 
 ```bash
-git clone https://github.com/DEIN_USERNAME/hpc-ml-dashboard.git
+git clone https://github.com/LaluSys/hpc-ml-dashboard.git
 cd hpc-ml-dashboard
 
 # Linux / macOS
